@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Requirement from "../../Models/Requirement.js";
+import Requirement from "../../models/Requirement.js";
 
 export const getRequirements = async (req, res, next) => {
   const { id, roleID } = req;

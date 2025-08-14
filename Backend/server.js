@@ -3,12 +3,12 @@ import cors from "cors";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 
-import connectDB from "./Config/dbConn.js";
+import connectDB from "./config/dbConn.js";
 import authRoute from "./Routes/auth.js";
-import errorHandler from "./Middleware/errorHandler.js";
+import errorHandler from "./middleware/errorHandler.js";
 import logoutRoute from "./Routes/logout.js";
 import refreshRoute from "./Routes/refreshToken.js";
-import verifyJWT from "./Middleware/verifyJWT.js";
+import verifyJWT from "./middleware/verifyJWT.js";
 import officerRoute from "./Routes/api/officer.js";
 import usersRoute from "./Routes/api/users.js";
 import studentRoute from "./Routes/api/student.js";
@@ -19,12 +19,16 @@ const PORT = 3500;
 connectDB();
 
 // Specify allowed URL to communicate to endpoint
-// app.use(
-//   cors({
-//     origin: ["http://localhost:5173", "https://clearancesystem.vercel.app"],
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://clearancesystem.onrender.com",
+      "http://127.0.0.1:5500",
+    ],
+    credentials: true,
+  })
+);
 
 // Parse JSON into req.body
 app.use(express.json());

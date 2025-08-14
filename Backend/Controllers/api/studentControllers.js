@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import User from "../../Models/User.js";
-import Wallet from "../../Models/Wallet.js";
+import User from "../../models/User.js";
+import Wallet from "../../models/Wallet.js";
 
 export const getWalletDetails = async (req, res, next) => {
   const { userId } = req.params;

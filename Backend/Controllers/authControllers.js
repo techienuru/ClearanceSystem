@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
-} from "../Config/secretKeys.js";
-import User from "../Models/User.js";
+} from "../config/secretKeys.js";
+import User from "../models/User.js";
 
 export const handleLogin = async (req, res, next) => {
   if ((!req?.body?.email && !req?.body?.matric) || !req?.body?.password)
