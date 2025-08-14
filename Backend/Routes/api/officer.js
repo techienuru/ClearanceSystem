@@ -3,7 +3,7 @@ import {
   addRequirement,
   deleteRequirement,
   getRequirements,
-} from "../../Controllers/api/officerControllers.js";
+} from "../../controllers/api/officerControllers.js";
 
 const officerRoute = express.Router();
 

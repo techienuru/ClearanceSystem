@@ -3,7 +3,7 @@ import {
   creditWallet,
   debitWallet,
   getWalletDetails,
-} from "../../Controllers/api/studentControllers.js";
+} from "../../controllers/api/studentControllers.js";
 
 const studentRoute = express.Router();
 
