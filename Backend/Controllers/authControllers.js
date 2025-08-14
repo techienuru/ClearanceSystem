@@ -9,7 +9,7 @@ export const handleLogin = async (req, res, next) => {
   if ((!req?.body?.email && !req?.body?.matric) || !req?.body?.password)
     return res
       .status(400)
-      .json({ error: "email/matric and password are required." });
+      .json({ error: "'email/matric','password' are required fields." });
 
   const { email, matric, password } = req.body;
 

@@ -22,9 +22,9 @@ connectDB();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
-      "https://clearancesystem.onrender.com",
       "http://127.0.0.1:5500",
+      "http://localhost:5173",
+      "https://clearancesystem.vercel.app",
     ],
     credentials: true,
   })
