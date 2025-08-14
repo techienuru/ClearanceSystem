@@ -45,10 +45,19 @@ export const handleLogin = async (req, res, next) => {
 
     foundUser.refreshToken = refreshToken;
     await foundUser.save();
+    let sameSiteVal, secureVal;
+
+    if (process.env.NODE_ENV === "production") {
+      sameSiteVal = "None";
+      secureVal = true;
+    } else {
+      sameSiteVal = "Lax";
+      secureVal = false;
+    }
 
     res.cookie("jwt", refreshToken, {
-      secure: false,
-      sameSite: "Lax",
+      secure: secureVal,
+      sameSite: sameSiteVal,
       maxAge: 2 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     }); // In production or when deploying, set "secure:true" && sameSite:"None" Else "secure:false" && sameSite:"Lax"
