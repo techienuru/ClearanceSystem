@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import User from "../Models/User.js";
 
 export const handleLogout = async (req, res, next) => {
   const cookies = req.cookies;

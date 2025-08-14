@@ -1,5 +1,5 @@
 import express from "express";
-import refreshJWT from "../controllers/refreshTokenControllers.js";
+import refreshJWT from "../Controllers/refreshTokenControllers.js";
 
 const refreshRoute = express.Router();
 

@@ -4,14 +4,14 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 
 import connectDB from "./config/dbConn.js";
-import authRoute from "./routes/auth.js";
-import errorHandler from "./middleware/errorHandler.js";
-import logoutRoute from "./routes/logout.js";
-import refreshRoute from "./routes/refreshToken.js";
-import verifyJWT from "./middleware/verifyJWT.js";
-import officerRoute from "./routes/api/officer.js";
-import usersRoute from "./routes/api/users.js";
-import studentRoute from "./routes/api/student.js";
+import authRoute from "./Routes/auth.js";
+import errorHandler from "./Middleware/errorHandler.js";
+import logoutRoute from "./Routes/logout.js";
+import refreshRoute from "./Routes/refreshToken.js";
+import verifyJWT from "./Middleware/verifyJWT.js";
+import officerRoute from "./Routes/api/officer.js";
+import usersRoute from "./Routes/api/users.js";
+import studentRoute from "./Routes/api/student.js";
 
 const app = express();
 const PORT = 3500;
