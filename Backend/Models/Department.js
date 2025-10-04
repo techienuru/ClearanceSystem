@@ -2,13 +2,15 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const departmentSchema = new Schema({
-  facultyID: {
-    type: String,
+  faculty_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Faculty",
     required: true,
   },
-  departmentName: {
+  department_name: {
     type: String,
     required: true,
+    unique: true,
   },
 });
 

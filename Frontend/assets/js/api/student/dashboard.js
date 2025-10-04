@@ -1,33 +1,55 @@
-import { backendEndpoint } from "../config/config.js";
-import { authHeaders } from "../utils/auth.js";
+import fetchUserDetails from "../utils/getUserDetails.js";
+import { hidePreloader, showError, showPreloader } from "../utils/utils.js";
+import { fetchClearanceStatus } from "./service/fetchClearanceStatus.js";
 
-fetch(
-  `${backendEndpoint}/api/users/get-details`,
-  {
-    method: "GET",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
-  },
-  { credentials: "include" }
-)
-  .then((res) => res.json())
-  .then((detailsResponse) => {
-    if (detailsResponse.isTokenExpired) return refreshToken();
-  })
-  .then((refreshResponse) => {
-    console.log(refreshResponse);
-  });
+const studentNameElem = document.querySelector("#student-name");
+const clearanceCard = document.querySelector(".js-clearance-status-card");
+const clearanceSteps = document.querySelector(".js-clearance-steps");
 
-const refreshToken = async () => {
+(async () => {
   try {
-    const res = await fetch(`${backendEndpoint}/refresh`, {
-      credentials: "include",
+    showPreloader(document.body, "Loading...");
+
+    const userDetails = await fetchUserDetails();
+    // If fetching user Details fail, exit the function
+    if (!userDetails) return;
+
+    // Render student name onto page
+    studentNameElem.innerHTML = userDetails.fullname;
+    // Gets student clearance status
+    const clearanceStatusArr = await fetchClearanceStatus(userDetails._id);
+
+    // Creating HTML content for Clearance summary section
+    let clearanceStepsHTML = "";
+    clearanceStatusArr.forEach((clearanceStatus) => {
+      const { roleName, clearanceProgress, clearanceScore } = clearanceStatus;
+      const badgeColor =
+        clearanceScore === 100
+          ? "bg-success"
+          : clearanceScore === 0
+          ? "bg-danger"
+          : "bg-warning";
+
+      clearanceStepsHTML += `<div class="clearance-step">
+                              <div
+                                class="d-flex justify-content-between align-items-center"
+                              >
+                                <h5>${roleName}'s Approval</h5>
+                                <span class="badge ${badgeColor}">${clearanceProgress}</span>
+                              </div>
+                              <div class="progress mb-3">
+                                <div
+                                  class="progress-bar progress-bar-striped progress-bar-animated ${badgeColor}"
+                                  style="width: ${clearanceScore}%"
+                                ></div>
+                              </div>
+                            </div>`;
     });
-    const refreshResponse = await res.json();
-
-    console.log(refreshResponse);
-
-    return { retry: true, accessToken: refreshResponse.accessToken };
+    clearanceSteps.innerHTML = clearanceStepsHTML;
   } catch (err) {
-    return { retry: false, error: "Error while refreshing token" };
+    showError(document.body, err.message);
+    console.error(err);
+  } finally {
+    hidePreloader();
   }
-};
+})();

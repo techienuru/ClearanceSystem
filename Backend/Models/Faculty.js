@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const facultySchema = new Schema({
-  facultyName: {
+  faculty_name: {
     type: String,
     required: true,
+    unique: true,
   },
 });
 

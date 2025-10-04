@@ -1,0 +1,32 @@
+.preloader-wrapper {
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgb(61, 57, 57);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preloader {
+  color: white;
+}
+.error-wrapper {
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(184, 12, 12, 0.836);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error {
+  color: white;
+}

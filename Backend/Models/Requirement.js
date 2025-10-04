@@ -10,10 +10,11 @@ const requirementSchema = {
     type: String,
     required: true,
   },
-  amount: String,
+  amount: Number,
   description: String,
-  roleID: {
-    type: String,
+  role_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Role",
     required: true,
   },
 };

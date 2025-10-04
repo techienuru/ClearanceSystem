@@ -15,8 +15,8 @@ signinForm.addEventListener("submit", async (e) => {
   const emailMatric = emailMatricField.value;
   const password = passwordField.value;
 
-  // Checks if emaulMatricField includes @
-  // Signifying it is an email.
+  // Checks if emaulMatricField includes "@"
+  // If it includes, it is an email.
   const identifier = emailMatricField.value.trim();
   const payload = {};
   if (identifier.includes("@")) {
@@ -27,19 +27,15 @@ signinForm.addEventListener("submit", async (e) => {
   payload.password = password;
 
   try {
-    const res = await fetch(
-      `${backendEndpoint}/auth`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      },
-      { credentials: "include" }
-    );
+    const res = await fetch(`${backendEndpoint}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });
 
     const authResponse = await res.json();
     if (authResponse?.error) throw new Error(authResponse.error);
-    console.log(authResponse);
 
     const { accessToken, message, role } = authResponse;
     saveAccessToken(accessToken);

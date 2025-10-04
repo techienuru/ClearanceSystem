@@ -4,6 +4,6 @@ import { handleLogin } from "../Controllers/authControllers.js";
 const authRoute = express.Router();
 
 // All routes are preceeded with "/auth"
-authRoute.post("/", handleLogin);
+authRoute.post("/login", handleLogin);
 
 export default authRoute;

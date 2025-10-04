@@ -4,7 +4,7 @@ import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } from "../config/secretKeys.js";
-import User from "../Models/User.js";
+import { User } from "../Models/User.js";
 
 const refreshJWT = async (req, res, next) => {
   const cookies = req.cookies;
@@ -14,7 +14,9 @@ const refreshJWT = async (req, res, next) => {
   const refreshToken = cookies.jwt;
 
   try {
-    const foundUser = await User.findOne({ refreshToken }).exec();
+    const foundUser = await User.findOne({ refreshToken })
+      .populate("role_id", "-__v")
+      .exec();
 
     if (!foundUser) return res.status(403).json({ error: "Invalid token" });
 
@@ -24,7 +26,12 @@ const refreshJWT = async (req, res, next) => {
     });
 
     const accessToken = jwt.sign(
-      { id: foundUser._id.toString(), roleID: foundUser.roleID },
+      {
+        id: foundUser._id.toString(),
+        role: foundUser.user_type,
+        role_id: foundUser.role_id._id,
+        role_name: foundUser.role_id.role_name,
+      },
       ACCESS_TOKEN_SECRET,
       { expiresIn: "30m" }
     );

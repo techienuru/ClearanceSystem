@@ -16,8 +16,10 @@ const verifyJWT = (req, res, next) => {
         .status(403)
         .json({ error: "Token has expired.", isTokenExpired: true });
 
-    req.id = decoded.id;
-    req.roleID = decoded.roleID;
+    req.user_id = decoded.id;
+    req.role = decoded.role;
+    req.role_id = decoded.role_id;
+    req.role_name = decoded.role_name;
 
     next();
   });

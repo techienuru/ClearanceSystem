@@ -33,6 +33,7 @@
       href="../assets/css/soft-ui-dashboard.css?v=1.0.3"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="../assets/css/style.css" />
 
     <style>
       /* General Styles */
@@ -439,7 +440,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./logout.html">
+            <a class="nav-link js-logout" href="#">
               <div
                 class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center"
               >
@@ -657,7 +658,7 @@
                         <div class="welcome-card shadow-lg p-5 rounded">
                           <h1 class="display-4">
                             Welcome,
-                            <span id="student-name">Asmau Suleiman</span>!
+                            <span id="student-name">...</span>!
                           </h1>
                           <p class="lead">
                             Your clearance process is now easier. Track your
@@ -674,59 +675,13 @@
 
                       <div class="col-md-12">
                         <div
-                          class="clearance-status-card shadow-lg p-4 rounded"
+                          class="clearance-status-card shadow-lg p-4 rounded js-clearance-status-card"
                         >
                           <h2 class="mb-4">Clearance Status</h2>
 
-                          <!-- Clearance Step: Bursar -->
-                          <div class="clearance-step">
-                            <div
-                              class="d-flex justify-content-between align-items-center"
-                            >
-                              <h5>Bursar's Approval</h5>
-                              <span class="badge bg-danger">Not Started</span>
-                            </div>
-                            <div class="progress mb-3">
-                              <div
-                                class="progress-bar progress-bar-striped progress-bar-animated bg-danger"
-                                style="width: 0%"
-                              ></div>
-                            </div>
-                          </div>
-
-                          <!-- Clearance Step: HOD -->
-                          <div class="clearance-step">
-                            <div
-                              class="d-flex justify-content-between align-items-center"
-                            >
-                              <h5>Department Approval</h5>
-                              <span class="badge bg-success">Approved</span>
-                            </div>
-                            <div class="progress mb-3">
-                              <div
-                                class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-                                style="width: 100%"
-                              ></div>
-                            </div>
-                          </div>
-
-                          <!-- Clearance Step: Dean -->
-                          <div class="clearance-step">
-                            <div
-                              class="d-flex justify-content-between align-items-center"
-                            >
-                              <h5>Faculty Approval</h5>
-                              <span class="badge bg-warning text-dark"
-                                >Pending</span
-                              >
-                            </div>
-                            <div class="progress mb-3">
-                              <div
-                                class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
-                                style="width: 50%"
-                              ></div>
-                            </div>
-                          </div>
+                          <article class="js-clearance-steps">
+                            <!-- Clearance Steps dynamically appear here... -->
+                          </article>
 
                           <!-- Download Clearance Button -->
                           <div class="text-center mt-4">
@@ -748,8 +703,12 @@
       </div>
     </main>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Custom JS File -->
     <script type="module" src="../assets/js/api/student/dashboard.js"></script>
+    <script src="../assets/js/script.js" type="module"></script>
 
     <!--   Core JS Files   -->
     <script src="../assets/js/core/popper.min.js"></script>

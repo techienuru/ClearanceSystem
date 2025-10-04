@@ -33,8 +33,29 @@
       href="../assets/css/soft-ui-dashboard.css?v=1.0.3"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="../assets/css/style.css" />
 
     <style>
+      /* Hides everything on the page excluding #clearance Summary  */
+      @media print {
+        body * {
+          visibility: hidden !important;
+        }
+        .clearance-container,
+        .clearance-container * {
+          visibility: visible !important;
+        }
+        .clearance-container {
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        .download-button-wrapper,
+        .download-button-wrapper * {
+          visibility: hidden !important;
+        }
+      }
+
       body {
         background-color: #f8f9fa;
       }
@@ -109,6 +130,18 @@
       }
       .download-btn a:hover {
         background-color: #0056b3;
+      }
+      .download-btn.disabled span {
+        cursor: not-allowed;
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #007bff6e;
+        color: white;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
       }
     </style>
   </head>
@@ -419,7 +452,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./logout.html">
+            <a class="nav-link js-logout" href="#">
               <div
                 class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center"
               >
@@ -529,15 +562,6 @@
                       class="dropdown-item border-radius-md"
                       href="javascript:;"
                     >
-                      <!-- <div class="d-flex py-1">
-                        <div class="my-auto">
-                          <img
-                            src="../assets/img/team-2.jpg"
-                            class="avatar avatar-sm me-3"
-                          />
-                        </div>
-                        
-                      </div> -->
                     </a>
                   </li>
                   <li class="mb-2">
@@ -630,43 +654,39 @@
             <div class="card">
               <div class="card-body p-3">
                 <div class="row">
-                  <div class="container clearance-container">
+                  <div
+                    class="container clearance-container js-clearance-container"
+                  >
                     <h2 class="text-center mb-4">Clearance Summary</h2>
 
                     <!-- Student Information -->
                     <div class="student-info">
                       <div class="student-details">
-                        <p><strong>Name:</strong> Asmau Suleiman</p>
-                        <p>
-                          <strong>Matriculation Number:</strong> 022123456789
+                        <p class="js-student-name">
+                          <!-- Displays dynamically -->
                         </p>
-                        <p><strong>Faculty:</strong> Applied Science</p>
-                        <p><strong>Department:</strong> Computer Science</p>
+                        <p class="js-student-matricno">
+                          <!-- Displays dynamically -->
+                        </p>
+                        <p class="js-student-faculty">
+                          <!-- Displays dynamically -->
+                        </p>
+                        <p class="js-student-department">
+                          <!-- Displays dynamically -->
+                        </p>
                       </div>
                     </div>
 
                     <!-- Clearance Status for Different Offices -->
-                    <div class="clearance-status">
-                      <!-- Bursar's Office -->
-                      <div class="status">
-                        <h6>Bursar's Office Clearance</h6>
-                        <span class="badge badge-approved">Approved</span>
-                      </div>
-                      <!-- Faculty Office -->
-                      <div class="status">
-                        <h6>Faculty Office Clearance</h6>
-                        <span class="badge badge-pending">Pending</span>
-                      </div>
-                      <!-- Department Block -->
-                      <div class="status">
-                        <h6>Department Clearance</h6>
-                        <span class="badge badge-approved">Approved</span>
-                      </div>
+                    <div class="clearance-status js-clearance-status">
+                      <!-- Displays dynamically -->
                     </div>
 
                     <!-- Download Button -->
-                    <div class="download-btn">
-                      <a href="#">Download Clearance Letter</a>
+                    <div
+                      class="download-button-wrapper js-download-button-wrapper"
+                    >
+                      <!-- Displays dynamically from JS -->
                     </div>
                   </div>
                 </div>
@@ -677,15 +697,21 @@
       </div>
     </main>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom JS Files -->
+    <script src="../assets/js/script.js" type="module"></script>
+    <script
+      type="module"
+      src="../assets/js/api/student/downloadLetter.js"
+    ></script>
+
     <!--   Core JS Files   -->
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/chartjs.min.js"></script>
-    <!-- Github buttons -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.3"></script>
   </body>
 </html>

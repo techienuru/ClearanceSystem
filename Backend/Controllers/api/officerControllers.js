@@ -1,13 +1,33 @@
 import mongoose from "mongoose";
 import Requirement from "../../Models/Requirement.js";
+import Clearance from "../../Models/Clearance.js";
+import Role from "../../Models/Role.js";
+
+export const getRoles = async (req, res, next) => {
+  try {
+    const rolesDoc = await Role.find({ role_name: { $regex: /Officer/i } })
+      .select("-__v")
+      .lean()
+      .exec();
+
+    if (!rolesDoc) return res.status(404).json({ error: "Roles not found!" });
+
+    res.json({ message: "success", data: rolesDoc });
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const getRequirements = async (req, res, next) => {
-  const { id, roleID } = req;
-
   try {
-    const requirements = await Requirement.findOne({ roleID }).exec();
+    const { role_id } = req;
 
-    res.json({ message: "success", requirements });
+    const requirementsDoc = await Requirement.find({ role_id })
+      .populate("role_id")
+      .lean()
+      .exec();
+
+    res.json({ message: "success", requirementsDoc });
   } catch (err) {
     next(err);
   }
@@ -22,7 +42,7 @@ export const addRequirement = async (req, res, next) => {
     return res.status(400).json({ error: "Missing required field." });
 
   const { title, type, amount, description } = req.body;
-  const { id, roleID } = req;
+  const { role_id } = req;
 
   try {
     const result = await Requirement.create({
@@ -30,27 +50,25 @@ export const addRequirement = async (req, res, next) => {
       type,
       amount,
       description,
-      roleID,
+      role_id,
     });
-    res.json({ message: "success" });
+    res.json({ message: "success", data: result });
   } catch (err) {
     next(err);
   }
 };
 
 export const deleteRequirement = async (req, res, next) => {
-  const { id } = req.params;
+  const { req_id } = req.params;
 
-  if (!mongoose.isValidObjectId(id))
+  if (!mongoose.isValidObjectId(req_id))
     return res.status(400).json({ error: "Invalid requirement ID" });
 
   try {
-    const foundRequirement = await Requirement.findById(id).exec();
+    const deleted = await Requirement.findByIdAndDelete(req_id).exec();
 
-    if (!foundRequirement)
+    if (!deleted)
       return res.status(404).json({ error: "Requirement not found" });
-
-    const deleted = await Requirement.findByIdAndDelete(id).exec();
 
     res.json({ message: "success", id: deleted._id });
   } catch (err) {

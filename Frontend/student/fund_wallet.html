@@ -33,6 +33,7 @@
       href="../assets/css/soft-ui-dashboard.css?v=1.0.3"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="../assets/css/style.css" />
 
     <style>
       /* General Styles */
@@ -402,7 +403,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./logout.html">
+            <a class="nav-link js-logout" href="#">
               <div
                 class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center"
               >
@@ -492,6 +493,9 @@
             ></ol>
             <h6 class="font-weight-bolder mb-0">Dashboard</h6>
           </nav>
+
+          <span class="w-100 text-end text-dark js-wallet-balance">₦0.00</span>
+
           <div
             class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4"
             id="navbar"
@@ -531,22 +535,6 @@
                   class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4"
                   aria-labelledby="dropdownMenuButton"
                 >
-                  <li class="mb-2">
-                    <a
-                      class="dropdown-item border-radius-md"
-                      href="javascript:;"
-                    >
-                      <!-- <div class="d-flex py-1">
-                        <div class="my-auto">
-                          <img
-                            src="../assets/img/team-2.jpg"
-                            class="avatar avatar-sm me-3"
-                          />
-                        </div>
-                        
-                      </div> -->
-                    </a>
-                  </li>
                   <li class="mb-2">
                     <a
                       class="dropdown-item border-radius-md"
@@ -645,7 +633,7 @@
                         >
                           <h2 class="mb-4">Fund Wallet</h2>
                           <form
-                            id="add-requirement-form"
+                            class="js-add-requirement-form"
                             action=""
                             method="POST"
                           >
@@ -653,7 +641,7 @@
                               <label for="amount">Amount</label>
                               <input
                                 type="number"
-                                class="form-control"
+                                class="form-control js-amount"
                                 name="amount"
                                 id="amount"
                                 placeholder="Enter Amount to fund"
@@ -665,7 +653,7 @@
                               <button
                                 type="submit"
                                 name="add_requirement"
-                                class="btn btn-primary"
+                                class="btn btn-primary js-add-funds"
                               >
                                 Add Funds
                               </button>
@@ -683,21 +671,19 @@
       </div>
     </main>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom JS Files -->
+    <script src="../assets/js/script.js" type="module"></script>
+    <script src="../assets/js/api/student/fundWallet.js" type="module"></script>
+
     <!--   Core JS Files   -->
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/chartjs.min.js"></script>
-    <script>
-      var win = navigator.platform.indexOf("Win") > -1;
-      if (win && document.querySelector("#sidenav-scrollbar")) {
-        var options = {
-          damping: "0.5",
-        };
-        Scrollbar.init(document.querySelector("#sidenav-scrollbar"), options);
-      }
-    </script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->

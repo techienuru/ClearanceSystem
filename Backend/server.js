@@ -3,6 +3,9 @@ import cors from "cors";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 
+import path from "node:path";
+const __dirname = import.meta.dirname;
+
 import connectDB from "./config/dbConn.js";
 import authRoute from "./Routes/auth.js";
 import errorHandler from "./Middleware/errorHandler.js";
@@ -24,6 +27,7 @@ app.use(
     origin: [
       "http://127.0.0.1:5500",
       "http://localhost:5173",
+      "http://localhost:5000",
       "https://clearancesystem.vercel.app",
     ],
     credentials: true,
@@ -34,6 +38,9 @@ app.use(
 app.use(express.json());
 // Parse cookies into req.cookies
 app.use(cookieParser());
+
+// Serves Frontend
+app.use("/", express.static(path.join(__dirname, "..", "Frontend")));
 
 app.use("/auth", authRoute);
 app.use("/refresh", refreshRoute);
