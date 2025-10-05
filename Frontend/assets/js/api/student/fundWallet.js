@@ -1,7 +1,12 @@
 import { backendEndpoint } from "../config/config.js";
 import { authHeaders } from "../utils/auth.js";
 import fetchUserDetails from "../utils/getUserDetails.js";
-import { hidePreloader, showError, showPreloader } from "../utils/utils.js";
+import {
+  hidePreloader,
+  showError,
+  showLoadingToast,
+  showPreloader,
+} from "../utils/utils.js";
 
 const walletBalanceElem = document.querySelector(".js-wallet-balance");
 const addReqForm = document.querySelector(".js-add-requirement-form");
@@ -12,17 +17,17 @@ loadPage();
 
 async function loadPage() {
   try {
-    showPreloader(document.body, "Loading...");
+    showLoadingToast("Page is loading", "Please wait...");
     const userDetails = await fetchUserDetails();
     // If fetching user Details fail, exit the function
     if (!userDetails) return;
 
     walletBalanceElem.innerHTML = `₦${userDetails.wallet.balance}.00`;
+    Swal.close();
   } catch (err) {
-    showError(document.body, err.message);
+    Swal.close();
+    showErrorToast("Network Error", err.message);
     console.error(err);
-  } finally {
-    hidePreloader();
   }
 }
 
@@ -38,6 +43,8 @@ addReqForm.addEventListener("submit", async (e) => {
 
   try {
     addFundsBtn.innerText = "Adding Funds...";
+    addFundsBtn.disabled = true;
+    showLoadingToast("Adding Funds", "Please wait...");
 
     const req = await fetch(`${backendEndpoint}/api/students/wallet/credit`, {
       method: "POST",
@@ -51,12 +58,16 @@ addReqForm.addEventListener("submit", async (e) => {
     if (!req.ok && res?.error) {
       throw new Error(res.error || "Network Connection fail");
     }
+    Swal.close();
 
     // Update the balance on the screen
-    await loadPage();
+    return await loadPage();
   } catch (err) {
-    showError(document.body, err.message);
+    Swal.close();
+    showErrorToast("Network Error", err.message);
+    console.error(err);
   } finally {
     addFundsBtn.innerText = addFundsBtnText;
+    addFundsBtn.disabled = false;
   }
 });

@@ -52,13 +52,13 @@ export const getFile = async (req, res, next) => {
       .lean()
       .exec();
 
+    if (!clearanceDoc)
+      return res.status(404).json({ error: "Clearance not found" });
+
     const filePath = path.join(UPLOAD_DIR, fileName);
     const { original_name, mimetype } = clearanceDoc.submissions[0];
 
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${original_name}"`
-    );
+    res.setHeader("Content-Disposition", `inline; filename="${original_name}"`);
     res.setHeader("Content-Type", mimetype);
     res.sendFile(filePath);
   } catch (err) {

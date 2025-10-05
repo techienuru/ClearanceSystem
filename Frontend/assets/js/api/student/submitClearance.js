@@ -2,11 +2,8 @@ import { backendEndpoint } from "../config/config.js";
 import { authHeaders } from "../utils/auth.js";
 import fetchUserDetails from "../utils/getUserDetails.js";
 import {
-  hidePreloader,
-  showError,
   showErrorToast,
   showLoadingToast,
-  showPreloader,
   showSuccessToast,
 } from "../utils/utils.js";
 import { fetchOfficersRoles } from "./service/fetchOfficersRoles.js";
@@ -18,7 +15,7 @@ loadPage();
 
 async function loadPage() {
   try {
-    showPreloader(document.body, "Loading...");
+    showLoadingToast("Page is loading", "Please wait...");
     const userDetails = await fetchUserDetails();
     // If fetching user Details fail, exit the function
     if (!userDetails) return;
@@ -40,11 +37,11 @@ async function loadPage() {
         displayRequirements(requirementsArr, roleName);
       });
     });
+    Swal.close();
   } catch (err) {
-    showError(document.body, err.message);
+    Swal.close();
+    showErrorToast("Network Error", err.message);
     console.error(err);
-  } finally {
-    hidePreloader();
   }
 }
 
@@ -73,6 +70,7 @@ function displaySelectionBtns(officersRoles, selectionArea) {
 
 async function fetchRequirements(roleId) {
   try {
+    showLoadingToast("Fetching requirements", "Please wait...");
     const req = await fetch(
       `${backendEndpoint}/api/students/requirements/${roleId}`,
       {
@@ -86,9 +84,12 @@ async function fetchRequirements(roleId) {
 
     if (!req.ok && res?.error) throw new Error(res.error || "Network error");
 
+    Swal.close();
     return res.data;
   } catch (err) {
-    throw new Error(err.message);
+    console.error(err.message);
+    Swal.close();
+    showErrorToast("Network Error", err.message);
   }
 }
 
@@ -98,6 +99,7 @@ function displayRequirements(requirementsArr, roleName) {
   formSection.innerHTML = `
         <h4>Submit Clearance for ${cleanRoleName}</h4>
         <form id="${cleanRoleName.toLowerCase()}ClearanceForm" class="js-clearance-form">
+          <div class ="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
@@ -113,6 +115,7 @@ function displayRequirements(requirementsArr, roleName) {
                       .join("")}
                 </tbody>
             </table>
+          </div>
         </form>
     `;
 
@@ -122,8 +125,6 @@ function displayRequirements(requirementsArr, roleName) {
 // Function to generate a row for each document requirement
 function generateDocumentRow(req) {
   const { title, type, _id, role_id, amount, description, status } = req;
-
-  console.log(req);
 
   //   Badge color for type text
   const badgeColor = type === "Payment" ? "info" : "warning";
@@ -139,8 +140,8 @@ function generateDocumentRow(req) {
       ? `<div class="input-group">
             ${paymentAction}
         </div>`
-      : `<div class="input-group">
-            <input type="file" class="form-control" name="" id="upload-${_id}" accept=".pdf,.png,.jpeg">
+      : `<div class="input-group w-100">
+            <input type="file" class="form-control input-" name="" id="upload-${_id}" accept=".pdf,.png,.jpeg">
             <button type="button" class="upload-btn bg-warning js-upload-btn" data-req-id="${_id}" data-role-id="${role_id._id}">Upload</button>
         </div>`;
 
@@ -163,6 +164,7 @@ async function payClearance(reqId, roleId, e) {
 
   try {
     e.target.innerText = "Processing...";
+    e.target.disabled = true;
 
     showLoadingToast("Processing Payment", "Please wait...");
 
@@ -184,13 +186,13 @@ async function payClearance(reqId, roleId, e) {
     // show success dialog
     Swal.close();
     showSuccessToast("Payment successful");
-    window.location.href = window.location.href;
   } catch (err) {
     console.error(err);
     Swal.close();
     showErrorToast("Network error", err.message);
   } finally {
     e.target.innerText = btnText;
+    e.target.disabled = false;
   }
 }
 
@@ -204,12 +206,13 @@ async function uploadClearance(reqId, roleId, e) {
   fd.append("document", file);
   fd.append("requirement_id", reqId);
   fd.append("role_id", roleId);
-  // requirement_id role_id file
 
   const btnText = e.target.innerText;
 
   try {
     e.target.innerText = "Uploading...";
+    e.target.disabled = true;
+    showLoadingToast("Uploading document", "Please wait...");
 
     const req = await fetch(
       `${backendEndpoint}/api/students/clearance/upload`,
@@ -228,11 +231,12 @@ async function uploadClearance(reqId, roleId, e) {
     Swal.close();
     showSuccessToast(res.message);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     Swal.close();
     showErrorToast("Network Error", err.message);
   } finally {
     e.target.innerText = btnText;
+    e.target.disabled = false;
   }
 }
 

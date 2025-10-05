@@ -65,6 +65,7 @@ function renderClearanceDoc(clearanceArr) {
       const type = doc.requirement.type;
       const { title, amount, description } = doc.requirement;
       const { status, _id } = doc;
+      // Picking the last file submitted by User
       const submissionsLength = doc.submissions.length;
       const filename =
         submissionsLength > 0 ? doc.submissions[submissionsLength - 1] : null;
@@ -100,10 +101,10 @@ function renderClearanceDoc(clearanceArr) {
               <div class="d-flex justify-content-between">
                 <div>
                 <a
-                    href="../Clearance Documents/"
-                    class="btn btn-view"
+                    href="#"
+                    class="btn btn-view js-view-btn"
                     target="_blank"
-                    data-filename="${filename}"
+                    data-filename="${filename?.filename}"
                     >View</a
                   >
                   
@@ -142,43 +143,90 @@ function renderClearanceDoc(clearanceArr) {
 
   docCardCont.innerHTML = docCardHTML;
 
-  // Listener to show Decline  feedback
-  addDeclineBtnListeners();
-  // Listener to approve clearance
-  addApproveBtnListeners();
-  // Listener to decline clearance
-  addSubmitFeedbackListener();
+  addActionListeners();
 }
 
-function addDeclineBtnListeners() {
-  const declineBtn = document.querySelector(".js-decline-clearance");
-  if (!declineBtn) return;
+function addActionListeners() {
+  if (!docCardCont) return console.warn("No .js-document-card-container found");
 
-  declineBtn.addEventListener("click", () => {
-    document.querySelector(".js-message-section").style.display = "block";
-  });
-}
+  // Listening for clicks inside Document Card Container
+  docCardCont.addEventListener("click", async (e) => {
+    // Listener for "Approve Button"
+    const approveBtn = e.target.closest(".js-approve-clearance");
+    if (approveBtn) {
+      const clearanceId = approveBtn.dataset.clearanceId;
 
-function addApproveBtnListeners() {
-  const approveBtn = document.querySelector(".js-approve-clearance");
-  if (!approveBtn) return;
+      if (!clearanceId)
+        return showErrorToast("Action Error", "Missing clearance Id");
 
-  approveBtn.addEventListener("click", async () => {
-    await approveClearance(approveBtn.dataset.clearanceId);
-  });
-}
+      approveBtn.disabled = true;
 
-function addSubmitFeedbackListener() {
-  const submitFeedbackElem = document.querySelector(".js-submit-feedback");
-  if (!submitFeedbackElem) return;
+      try {
+        await approveClearance(clearanceId);
+      } finally {
+        approveBtn.disabled = false;
+      }
+      return;
+    }
 
-  submitFeedbackElem.addEventListener("click", async () => {
-    const feedbackInput = document.querySelector(".js-feedback").value.trim();
+    // Listener for "Decline Button"
+    const declineBtn = e.target.closest(".js-decline-clearance");
+    if (declineBtn) {
+      // Picking the ancestor/parent of the clicked decline button
+      const card = declineBtn.closest(".document-card");
+      if (!card) return;
 
-    if (!feedbackInput || feedbackInput === "")
-      return showErrorToast("User Error", "Please input a feedback");
+      // Showing the feedback container inside the card
+      // and making the textarea focus automatically
+      const msgSection = card.querySelector(".js-message-section");
+      if (msgSection) msgSection.style.display = "block";
+      const textarea = msgSection.querySelector(".js-feedback");
+      if (textarea) textarea.focus();
+      return;
+    }
 
-    declineClearance(submitFeedbackElem.dataset.clearanceId, feedbackInput);
+    // Listener for "Submit" button - That which decline clearance
+    const submitBtn = e.target.closest(".js-submit-feedback");
+    if (submitBtn) {
+      // Picking the ancestor/parent of the clicked submit button
+      const card = submitBtn.closest(".document-card");
+      if (!card) return;
+
+      const textarea = card.querySelector(".js-feedback");
+      const feedback = (textarea?.value || "").trim();
+      if (!feedback)
+        return showErrorToast("User Error", "Please input a feedback!");
+      const clearanceId = submitBtn.dataset.clearanceId;
+      if (!clearanceId)
+        return showErrorToast("Action Error", "Missing clearance Id");
+
+      submitBtn.disabled = true;
+      try {
+        await declineClearance(clearanceId, feedback);
+      } finally {
+        submitBtn.disabled = false;
+      }
+
+      return;
+    }
+
+    // Listener for "Submit" button - That which decline clearance
+    const viewBtn = e.target.closest(".js-view-btn");
+    if (viewBtn) {
+      e.preventDefault();
+      const filename = viewBtn.dataset.filename;
+      if (!filename)
+        return showErrorToast("File Error", "No file available to view");
+
+      viewBtn.disabled = true;
+
+      try {
+        await viewFile(filename);
+      } finally {
+        viewBtn.disabled = false;
+      }
+      return;
+    }
   });
 }
 
@@ -211,7 +259,7 @@ async function approveClearance(clearanceId) {
 }
 async function declineClearance(clearanceId, feedback) {
   try {
-    showLoadingToast("Approving Clearance", "Please wait...");
+    showLoadingToast("Declining Clearance", "Please wait...");
 
     const res = await fetch(
       `${backendEndpoint}/api/students/clearance/action/decline`,
@@ -234,6 +282,44 @@ async function declineClearance(clearanceId, feedback) {
     console.error(err);
     Swal.close();
     showErrorToast("Network Error", err.message);
+  }
+}
+async function viewFile(filename) {
+  try {
+    showLoadingToast("Loading file", "Please wait...");
+
+    const res = await fetch(
+      `${backendEndpoint}/api/users/clearance/files/${filename}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        credentials: "include",
+      }
+    );
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body?.error || `Failed to fetch file (${res.status})`);
+    }
+
+    const contentType =
+      res.headers.get("Content-Type") || "application/octet-stream";
+    const blob = await res.blob();
+
+    // Create an object URL and open in a new tab
+    const blobUrl = URL.createObjectURL(
+      new Blob([blob], { type: contentType })
+    );
+    window.open(blobUrl, "_blank", "noopener");
+
+    // Free space after a minute
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+
+    Swal.close();
+  } catch (err) {
+    console.error(err);
+    Swal.close();
+    showErrorToast("File Error", err.message || "Could not load file");
   }
 }
 

@@ -74,7 +74,7 @@ function displayEachClearance(clearanceArr) {
     .map((arrObj) => {
       const status = arrObj.status;
       const badgeColor =
-        status === "Paid"
+        status === "Paid" || status === "Approved"
           ? "approved"
           : status === "Pending"
           ? "pending"
@@ -99,10 +99,11 @@ function displayFeedbacks(feedbackArr) {
   if (!feedbackArr || feedbackArr.length === 0) return "";
 
   return feedbackArr
-    .map((feedback) => {
-      `<span>
-        "${feedback}"
-      </span>`;
-    })
+    .map(
+      (feedback) =>
+        `<span class="badge bg-info mb-3">
+        Feedback: "${feedback}"
+      </span>`
+    )
     .join("");
 }
