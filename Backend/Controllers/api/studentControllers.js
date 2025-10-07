@@ -125,6 +125,19 @@ export const payClearance = async (req, res, next) => {
       return res.status(404).json({ error: "Requirement doesn't exist." });
     const { amount } = requirementDoc;
 
+    // Checking if student has already made payment for this requirement
+    const existingPayment = await Clearance.findOne({
+      student_id: user_id,
+      requirement_id,
+      status: "Paid",
+    })
+      .lean()
+      .exec();
+    if (existingPayment)
+      return res
+        .status(409)
+        .json({ error: "You have already made payment for this." });
+
     // Verify Student
     const foundUser = await Student.findById(user_id).lean().exec();
     if (!foundUser) return res.status(404).json({ error: "User not found" });
